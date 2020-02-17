@@ -1,6 +1,8 @@
 package org.nipu.po.order.clients;
 
+import org.nipu.po.order.ProductSpecificationTO;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -10,9 +12,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
  *
  * @author Nikita_Puzankov
  */
-@FeignClient(name = "pc", url = "${pcurl}")
+@FeignClient(name = "pc", url = "${pcurl}", fallback = ProductSpecificationRepository.ProductSpecificationRepositoryFallback.class)
 public interface ProductSpecificationRepository {
 
     @RequestMapping(method = RequestMethod.GET, path = "/catalog/{specificationId}")
-    Object existsById(@PathVariable("specificationId") String specificationId);
+    ProductSpecificationTO findById(@PathVariable("specificationId") String specificationId);
+
+    @Component
+    class ProductSpecificationRepositoryFallback implements ProductSpecificationRepository {
+        @Override public ProductSpecificationTO findById(String specificationId) {
+            return null;
+        }
+    }
 }
