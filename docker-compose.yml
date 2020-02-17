@@ -37,6 +37,22 @@ services:
         EUREKA_INSTANCE_PREFER_IP_ADDRESS: 'true'
         pcurl: 'pc:8080'
         EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: 'http://eureka:8761/eureka/'
+
+  zuul-server:
+    build: api-gateway/
+    ports:
+      - '5030:5006'
+      - '8762:8762'
+    depends_on:
+      - eureka
+      - po
+      - pc
+    links:
+      - eureka:eureka
+    environment:
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: 'true'
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: 'http://eureka:8761/eureka/'
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: '*'
 networks:
     default:
         driver: bridge
